@@ -21,6 +21,7 @@ class Freelancer(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable=False)
     username = db.Column(db.String, nullable=False, unique=True)
     email = db.Column(db.String, nullable=False)
+    rate = db.Column(db.Integer)  # Adding rate field for freelancer's rate
 
     # relationship with Project
     projects = db.relationship(
