@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import './ProjectList.css';
+import ProjectFormModal from './ProjectFormModal'; // Import the ProjectFormModal component
 
 const ProjectList = ({ projects, openProjectForm, handleSuccess }) => {
   const [expandedProject, setExpandedProject] = useState(null);
+  const [isProjectFormOpen, setIsProjectFormOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
 
   const handleEdit = (project) => {
+    setEditingProject(project);
     openProjectForm(project);
   };
 
@@ -72,7 +76,7 @@ const ProjectList = ({ projects, openProjectForm, handleSuccess }) => {
           ))}
         </tbody>
       </table>
-      <button className="add-project-button" onClick={() => openProjectForm(null)}>Add Project</button>
+      <button className="add-project-button" onClick={() => setIsProjectFormOpen(true)}>Add Project</button>
 
       {expandedProject && (
         <div className="modal">
@@ -91,6 +95,14 @@ const ProjectList = ({ projects, openProjectForm, handleSuccess }) => {
           </div>
         </div>
       )}
+
+      {/* Render ProjectFormModal */}
+      <ProjectFormModal
+        isOpen={isProjectFormOpen}
+        onRequestClose={() => { setIsProjectFormOpen(false); setEditingProject(null); }}
+        onSuccess={handleSuccess}
+        initialProject={editingProject}
+      />
     </div>
   );
 };

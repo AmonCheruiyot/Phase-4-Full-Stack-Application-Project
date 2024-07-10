@@ -77,13 +77,25 @@ function App() {
               />
             </Route>
             <Route path="/freelancers">
-              <FreelancerList freelancers={freelancers} openFreelancerForm={() => setIsFreelancerFormOpen(true)} handleSuccess={handleSuccess} />
+              <FreelancerList 
+                freelancers={freelancers} 
+                openFreelancerForm={() => setIsFreelancerFormOpen(true)} 
+                handleSuccess={handleSuccess} 
+              />
             </Route>
             <Route path="/clients">
-              <ClientList clients={clients} openClientForm={() => setIsClientFormOpen(true)} handleSuccess={handleSuccess} />
+              <ClientList 
+                clients={clients} 
+                openClientForm={() => setIsClientFormOpen(true)} 
+                handleSuccess={handleSuccess} 
+              />
             </Route>
             <Route path="/projects">
-              <ProjectList projects={projects} openProjectForm={() => setIsProjectFormOpen(true)} handleSuccess={handleSuccess} />
+              <ProjectList 
+                projects={projects} 
+                openProjectForm={() => setIsProjectFormOpen(true)} 
+                handleSuccess={handleSuccess} 
+              />
             </Route>
           </Switch>
         </main>
