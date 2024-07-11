@@ -3,63 +3,74 @@ import Modal from 'react-modal';
 import './ModalForm.css';
 
 const ProjectFormModal = ({ isOpen, onRequestClose, onSuccess, initialProject }) => {
-  const [project, setProject] = useState({ title: '', description: '', rate: '', freelancer_id: '', client_id: '' });
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [rate, setRate] = useState('');
+  const [freelancerId, setFreelancerId] = useState('');
+  const [clientId, setClientId] = useState('');
   const [error, setError] = useState(null);
 
+  // useEffect to populate form fields when initialProject changes
   useEffect(() => {
     if (initialProject) {
-      setProject(initialProject);
+      setTitle(initialProject.title || '');
+      setDescription(initialProject.description || '');
+      setRate(initialProject.rate || '');
+      setFreelancerId(initialProject.freelancer_id || '');
+      setClientId(initialProject.client_id || '');
     } else {
-      setProject({ title: '', description: '', rate: '', freelancer_id: '', client_id: '' });
+      setTitle('');
+      setDescription('');
+      setRate('');
+      setFreelancerId('');
+      setClientId('');
     }
   }, [initialProject]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProject((prevProject) => ({
-      ...prevProject,
-      [name]: value,
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const method = initialProject ? 'PUT' : 'POST';
-    const url = `http://localhost:5555/projects${initialProject ? `/${initialProject.id}` : ''}`;
+    const updatedProject = { title, description, rate, freelancer_id: freelancerId, client_id: clientId };
 
     try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(project),
-      });
+      let response;
+      if (initialProject) {
+        // Update existing project using PATCH
+        response = await fetch(`http://localhost:5555/projects/${initialProject.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedProject),
+        });
+      } else {
+        // Add new project using POST
+        response = await fetch('http://localhost:5555/projects', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedProject),
+        });
+      }
 
       if (response.ok) {
         onSuccess();
         onRequestClose();
       } else {
         const errorData = await response.json();
-        setError(`Error ${initialProject ? 'updating' : 'creating'} project: ${errorData.errors.join(', ')}`);
+        setError('Error ' + (initialProject ? 'updating' : 'creating') + ' project: ' + errorData.errors.join(', '));
       }
     } catch (error) {
-      setError(`Error ${initialProject ? 'updating' : 'creating'} project: ${error.message}`);
+      setError('Error ' + (initialProject ? 'updating' : 'creating') + ' project: ' + error.message);
     }
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={onRequestClose}
-      contentLabel={initialProject ? 'Edit Project' : 'Add Project'}
-      className="modal"
-      overlayClassName="overlay"
-    >
+    <Modal isOpen={isOpen} onRequestClose={onRequestClose} contentLabel={initialProject ? 'Edit Project' : 'Add Project'}>
       <div className="modal-content">
         <div className="modal-header">
           <h2>{initialProject ? 'Edit Project' : 'Add Project'}</h2>
-          <button onClick={onRequestClose} className="close-button">&times;</button>
+          <button onClick={onRequestClose}>&times;</button>
         </div>
         <form onSubmit={handleSubmit}>
           <div className="modal-body">
@@ -67,18 +78,16 @@ const ProjectFormModal = ({ isOpen, onRequestClose, onSuccess, initialProject })
               Title:
               <input
                 type="text"
-                name="title"
-                value={project.title}
-                onChange={handleChange}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 required
               />
             </label>
             <label>
               Description:
               <textarea
-                name="description"
-                value={project.description}
-                onChange={handleChange}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 required
               />
             </label>
@@ -86,9 +95,8 @@ const ProjectFormModal = ({ isOpen, onRequestClose, onSuccess, initialProject })
               Rate:
               <input
                 type="number"
-                name="rate"
-                value={project.rate}
-                onChange={handleChange}
+                value={rate}
+                onChange={(e) => setRate(e.target.value)}
                 required
               />
             </label>
@@ -96,9 +104,8 @@ const ProjectFormModal = ({ isOpen, onRequestClose, onSuccess, initialProject })
               Freelancer ID:
               <input
                 type="number"
-                name="freelancer_id"
-                value={project.freelancer_id}
-                onChange={handleChange}
+                value={freelancerId}
+                onChange={(e) => setFreelancerId(e.target.value)}
                 required
               />
             </label>
@@ -106,9 +113,8 @@ const ProjectFormModal = ({ isOpen, onRequestClose, onSuccess, initialProject })
               Client ID:
               <input
                 type="number"
-                name="client_id"
-                value={project.client_id}
-                onChange={handleChange}
+                value={clientId}
+                onChange={(e) => setClientId(e.target.value)}
                 required
               />
             </label>

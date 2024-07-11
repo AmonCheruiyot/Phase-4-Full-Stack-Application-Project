@@ -2,7 +2,7 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #7dbde8; /* Soft blue background color */
+  /* Remove background-color: #7dbde8; */
   text-align: center;
 }
 
@@ -37,4 +37,15 @@
 
 .action-button:hover {
   background-color: var(--button-hover-bg-color);
+}
+
+/* Ensure footer is at the bottom of the page */
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #f1f1f1; /* Example background color */
+  text-align: center;
+  padding: 10px 0;
 }

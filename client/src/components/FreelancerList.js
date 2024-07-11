@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './FreelancerList.css';
+import FreelancerFormModal from './FreelancerFormModal';
 
 const FreelancerList = ({ freelancers, openFreelancerForm, handleSuccess }) => {
-  const handleEdit = (freelancer) => {
-    openFreelancerForm(freelancer);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedFreelancer, setSelectedFreelancer] = useState(null);
+
+  const openModal = (freelancer) => {
+    setSelectedFreelancer(freelancer);
+    setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const closeModal = () => {
+    setSelectedFreelancer(null);
+    setIsModalOpen(false);
+  };
+
+  const handleAddFreelancer = () => {
+    openModal(null); // Open modal with null initialData to add a new freelancer
+  };
+
+  const handleEditFreelancer = (freelancer) => {
+    openModal(freelancer); // Open modal with the selected freelancer data to edit
+  };
+
+  const handleDeleteFreelancer = (id) => {
     if (window.confirm('Are you sure you want to delete this freelancer?')) {
       fetch(`http://localhost:5555/freelancers/${id}`, {
         method: 'DELETE',
@@ -46,15 +64,23 @@ const FreelancerList = ({ freelancers, openFreelancerForm, handleSuccess }) => {
               <td data-label="Rate">{freelancer.rate}</td>
               <td data-label="Action">
                 <div className="action-buttons">
-                  <button className="edit-button" onClick={() => handleEdit(freelancer)}>Edit</button>
-                  <button className="delete-button" onClick={() => handleDelete(freelancer.id)}>Delete</button>
+                  <button className="edit-button" onClick={() => handleEditFreelancer(freelancer)}>Edit</button>
+                  <button className="delete-button" onClick={() => handleDeleteFreelancer(freelancer.id)}>Delete</button>
                 </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <button className="add-freelancer-button" onClick={() => openFreelancerForm(null)}>Add Freelancer</button>
+      <button className="add-freelancer-button" onClick={handleAddFreelancer}>Add Freelancer</button>
+
+      {/* FreelancerFormModal */}
+      <FreelancerFormModal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        onSuccess={handleSuccess}
+        initialData={selectedFreelancer}
+      />
     </div>
   );
 };

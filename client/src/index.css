@@ -89,7 +89,6 @@ button:hover {
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #7dbde8; /* Soft blue background color */
   text-align: center;
   border-radius: 10px; /* Rounded corners for the container */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
@@ -129,4 +128,11 @@ button:hover {
 .action-button:hover {
   background-color: var(--button-hover-bg-color);
   transform: translateY(-2px); /* Lift effect on hover */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .home-container {
+    padding: 10px;
+  }
 }

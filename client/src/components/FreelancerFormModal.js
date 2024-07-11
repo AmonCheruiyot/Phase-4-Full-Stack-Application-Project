@@ -1,42 +1,72 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import './ModalForm.css';
 
-const FreelancerFormModal = ({ isOpen, onRequestClose, onSuccess }) => {
+const FreelancerFormModal = ({ isOpen, onRequestClose, onSuccess, initialData }) => {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [rate, setRate] = useState('');
   const [error, setError] = useState(null);
 
+  // useEffect to populate form fields when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      setName(initialData.name || '');
+      setUsername(initialData.username || '');
+      setEmail(initialData.email || '');
+      setRate(initialData.rate || '');
+    } else {
+      setName('');
+      setUsername('');
+      setEmail('');
+      setRate('');
+    }
+  }, [initialData]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newFreelancer = { name, username, email, rate };
+    const updatedFreelancer = { name, username, email, rate };
+
     try {
-      const response = await fetch('http://localhost:5555/freelancers', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newFreelancer),
-      });
+      let response;
+      if (initialData) {
+        // Update existing freelancer using PATCH
+        response = await fetch(`http://localhost:5555/freelancers/${initialData.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedFreelancer),
+        });
+      } else {
+        // Add new freelancer using POST
+        response = await fetch('http://localhost:5555/freelancers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedFreelancer),
+        });
+      }
+
       if (response.ok) {
         onSuccess();
         onRequestClose();
       } else {
         const errorData = await response.json();
-        setError('Error creating freelancer: ' + errorData.errors.join(', '));
+        setError('Error ' + (initialData ? 'updating' : 'creating') + ' freelancer: ' + errorData.errors.join(', '));
       }
     } catch (error) {
-      setError('Error creating freelancer: ' + error.message);
+      setError('Error ' + (initialData ? 'updating' : 'creating') + ' freelancer: ' + error.message);
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onRequestClose} contentLabel="Add Freelancer">
+    <Modal isOpen={isOpen} onRequestClose={onRequestClose} contentLabel={initialData ? 'Edit Freelancer' : 'Add Freelancer'}>
       <div className="modal-content">
         <div className="modal-header">
-          <h2>Add Freelancer</h2>
+          <h2>{initialData ? 'Edit Freelancer' : 'Add Freelancer'}</h2>
           <button onClick={onRequestClose}>&times;</button>
         </div>
         <form onSubmit={handleSubmit}>
@@ -83,7 +113,7 @@ const FreelancerFormModal = ({ isOpen, onRequestClose, onSuccess }) => {
               Cancel
             </button>
             <button type="submit" className="submit-button">
-              Add Freelancer
+              {initialData ? 'Update Freelancer' : 'Add Freelancer'}
             </button>
           </div>
         </form>

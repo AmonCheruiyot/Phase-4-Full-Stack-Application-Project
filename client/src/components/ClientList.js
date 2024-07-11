@@ -1,12 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Modal from 'react-modal';
 import './ClientList.css';
+import ClientFormModal from './ClientFormModal'; // Assuming this is the correct file name for the ClientFormModal component
 
 const ClientList = ({ clients, openClientForm, handleSuccess }) => {
-  const handleEdit = (client) => {
-    openClientForm(client);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
+
+  const openModal = (client) => {
+    setSelectedClient(client);
+    setIsModalOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const closeModal = () => {
+    setSelectedClient(null);
+    setIsModalOpen(false);
+  };
+
+  const handleAddClient = () => {
+    openModal(null); // Open modal with null initialData to add a new client
+  };
+
+  const handleEditClient = (client) => {
+    openModal(client); // Open modal with the selected client data to edit
+  };
+
+  const handleDeleteClient = (id) => {
     if (window.confirm('Are you sure you want to delete this client?')) {
       fetch(`http://localhost:5555/clients/${id}`, {
         method: 'DELETE',
@@ -44,15 +63,23 @@ const ClientList = ({ clients, openClientForm, handleSuccess }) => {
               <td data-label="Email">{client.email}</td>
               <td data-label="Action">
                 <div className="action-buttons">
-                  <button className="edit-button" onClick={() => handleEdit(client)}>Edit</button>
-                  <button className="delete-button" onClick={() => handleDelete(client.id)}>Delete</button>
+                  <button className="edit-button" onClick={() => handleEditClient(client)}>Edit</button>
+                  <button className="delete-button" onClick={() => handleDeleteClient(client.id)}>Delete</button>
                 </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <button className="add-client-button" onClick={() => openClientForm(null)}>Add Client</button>
+      <button className="add-client-button" onClick={handleAddClient}>Add Client</button>
+
+      {/* ClientFormModal */}
+      <ClientFormModal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        onSuccess={handleSuccess}
+        initialData={selectedClient}
+      />
     </div>
   );
 };

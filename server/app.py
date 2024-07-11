@@ -84,6 +84,56 @@ class FreelancerByID(Resource):
             )
         return response
 
+    def put(self, id):
+        freelancer = Freelancer.query.filter_by(id=id).first()
+        if freelancer:
+            try:
+                freelancer.name = request.json.get("name", freelancer.name)
+                freelancer.username = request.json.get("username", freelancer.username)
+                freelancer.email = request.json.get("email", freelancer.email)
+                freelancer.rate = request.json.get("rate", freelancer.rate)
+
+                db.session.commit()
+                response = make_response(
+                    jsonify(freelancer.to_dict()),
+                    200
+                )
+            except Exception as e:
+                response = make_response(
+                    jsonify({"errors": [str(e)]}),
+                    400
+                )
+        else:
+            response = make_response(
+                jsonify({"error": "Freelancer not found"}),
+                404
+            )
+        return response
+
+    def patch(self, id):
+        freelancer = Freelancer.query.filter_by(id=id).first()
+        if freelancer:
+            try:
+                for key, value in request.json.items():
+                    if hasattr(freelancer, key):
+                        setattr(freelancer, key, value)
+                db.session.commit()
+                response = make_response(
+                    jsonify(freelancer.to_dict()),
+                    200
+                )
+            except Exception as e:
+                response = make_response(
+                    jsonify({"errors": [str(e)]}),
+                    400
+                )
+        else:
+            response = make_response(
+                jsonify({"error": "Freelancer not found"}),
+                404
+            )
+        return response
+
 class Clients(Resource):
     def get(self):
         response_dict_list = [n.to_dict() for n in Client.query.all()]
@@ -141,6 +191,55 @@ class ClientByID(Resource):
             )
         return response
 
+    def put(self, id):
+        client = Client.query.filter_by(id=id).first()
+        if client:
+            try:
+                client.name = request.json.get("name", client.name)
+                client.username = request.json.get("username", client.username)
+                client.email = request.json.get("email", client.email)
+
+                db.session.commit()
+                response = make_response(
+                    jsonify(client.to_dict()),
+                    200
+                )
+            except Exception as e:
+                response = make_response(
+                    jsonify({"errors": [str(e)]}),
+                    400
+                )
+        else:
+            response = make_response(
+                jsonify({"error": "Client not found"}),
+                404
+            )
+        return response
+
+    def patch(self, id):
+        client = Client.query.filter_by(id=id).first()
+        if client:
+            try:
+                for key, value in request.json.items():
+                    if hasattr(client, key):
+                        setattr(client, key, value)
+                db.session.commit()
+                response = make_response(
+                    jsonify(client.to_dict()),
+                    200
+                )
+            except Exception as e:
+                response = make_response(
+                    jsonify({"errors": [str(e)]}),
+                    400
+                )
+        else:
+            response = make_response(
+                jsonify({"error": "Client not found"}),
+                404
+            )
+        return response
+
 class Projects(Resource):
     def get(self):
         response_dict_list = [p.to_dict() for p in Project.query.all()]
@@ -185,12 +284,34 @@ class ProjectByID(Resource):
             )
         return response
 
-    def patch(self, id):
+    def delete(self, id):
+        project = Project.query.filter_by(id=id).first()
+        if project:
+            db.session.delete(project)
+            db.session.commit()
+            response_dict = {"message": "Project successfully deleted"}
+            response = make_response(
+                jsonify(response_dict),
+                200
+            )
+        else:
+            response = make_response(
+                jsonify({"error": "Project not found"}),
+                404
+            )
+        return response
+
+    def put(self, id):
         project = Project.query.filter_by(id=id).first()
         if project:
             try:
-                for key, value in request.json.items():
-                    setattr(project, key, value)
+                data = request.json
+                project.title = data.get("title", project.title)
+                project.description = data.get("description", project.description)
+                project.rate = data.get("rate", project.rate)
+                project.freelancer_id = data.get("freelancer_id", project.freelancer_id)
+                project.client_id = data.get("client_id", project.client_id)
+
                 db.session.commit()
                 response = make_response(
                     jsonify(project.to_dict()),
@@ -208,19 +329,27 @@ class ProjectByID(Resource):
             )
         return response
 
-    def delete(self, id):
+    def patch(self, id):
         project = Project.query.filter_by(id=id).first()
         if project:
-            db.session.delete(project)
-            db.session.commit()
-            response_dict = {"message": "Project successfully deleted"}  # Updated message
-            response = make_response(
-                jsonify(response_dict),
-                200
-            )
+            try:
+                data = request.json
+                for key, value in data.items():
+                    if hasattr(project, key):
+                        setattr(project, key, value)
+                db.session.commit()
+                response = make_response(
+                    jsonify(project.to_dict()),
+                    200
+                )
+            except Exception as e:
+                response = make_response(
+                    jsonify({"errors": [str(e)]}),
+                    400
+                )
         else:
             response = make_response(
-                jsonify({"error": "Project not found"}),
+                jsonify({"error": "project not found"}),
                 404
             )
         return response

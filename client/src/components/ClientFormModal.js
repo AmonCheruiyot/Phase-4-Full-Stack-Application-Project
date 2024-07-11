@@ -13,20 +13,38 @@ const ClientFormModal = ({ isOpen, onRequestClose, onSuccess, initialData }) => 
       setName(initialData.name);
       setUsername(initialData.username);
       setEmail(initialData.email);
+    } else {
+      setName('');
+      setUsername('');
+      setEmail('');
     }
   }, [initialData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedClient = { name, username, email };
+    const clientData = { name, username, email };
     try {
-      const response = await fetch(`http://localhost:5555/clients/${initialData.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedClient),
-      });
+      let response;
+      if (initialData) {
+        // Editing existing client
+        response = await fetch(`http://localhost:5555/clients/${initialData.id}`, {
+          method: 'PATCH', // Use PATCH for partial updates
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(clientData),
+        });
+      } else {
+        // Adding new client
+        response = await fetch(`http://localhost:5555/clients`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(clientData),
+        });
+      }
+
       if (response.ok) {
         onSuccess();
         onRequestClose();
@@ -43,7 +61,7 @@ const ClientFormModal = ({ isOpen, onRequestClose, onSuccess, initialData }) => 
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} contentLabel="Edit Client">
       <div className="modal-content">
         <div className="modal-header">
-          <h2>Edit Client</h2>
+          <h2>{initialData ? 'Edit Client' : 'Add Client'}</h2>
           <button onClick={onRequestClose}>&times;</button>
         </div>
         <form onSubmit={handleSubmit}>
@@ -81,7 +99,7 @@ const ClientFormModal = ({ isOpen, onRequestClose, onSuccess, initialData }) => 
               Cancel
             </button>
             <button type="submit" className="submit-button">
-              Update Client
+              {initialData ? 'Update Client' : 'Add Client'}
             </button>
           </div>
         </form>

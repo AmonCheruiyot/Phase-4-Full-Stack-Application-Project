@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import './ProjectList.css';
 import ProjectFormModal from './ProjectFormModal'; // Import the ProjectFormModal component
 
-const ProjectList = ({ projects, openProjectForm, handleSuccess }) => {
+const ProjectList = ({ projects, handleSuccess }) => {
   const [expandedProject, setExpandedProject] = useState(null);
   const [isProjectFormOpen, setIsProjectFormOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
 
   const handleEdit = (project) => {
     setEditingProject(project);
-    openProjectForm(project);
+    setIsProjectFormOpen(true);
   };
 
   const handleDelete = (id) => {
@@ -96,7 +96,6 @@ const ProjectList = ({ projects, openProjectForm, handleSuccess }) => {
         </div>
       )}
 
-      {/* Render ProjectFormModal */}
       <ProjectFormModal
         isOpen={isProjectFormOpen}
         onRequestClose={() => { setIsProjectFormOpen(false); setEditingProject(null); }}
