@@ -27,7 +27,7 @@ const ClientFormModal = ({ isOpen, onRequestClose, onSuccess, initialData }) => 
       let response;
       if (initialData) {
         // Editing existing client
-        response = await fetch(`http://localhost:5555/clients/${initialData.id}`, {
+        response = await fetch(`/clients/${initialData.id}`, {
           method: 'PATCH', // Use PATCH for partial updates
           headers: {
             'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ const ClientFormModal = ({ isOpen, onRequestClose, onSuccess, initialData }) => 
         });
       } else {
         // Adding new client
-        response = await fetch(`http://localhost:5555/clients`, {
+        response = await fetch(`/clients`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -26,7 +26,7 @@ const FreelancerList = ({ freelancers, openFreelancerForm, handleSuccess }) => {
 
   const handleDeleteFreelancer = (id) => {
     if (window.confirm('Are you sure you want to delete this freelancer?')) {
-      fetch(`http://localhost:5555/freelancers/${id}`, {
+      fetch(`/freelancers/${id}`, {
         method: 'DELETE',
       })
         .then(response => {

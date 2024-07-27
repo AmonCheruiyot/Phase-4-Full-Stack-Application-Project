@@ -32,7 +32,7 @@ const FreelancerFormModal = ({ isOpen, onRequestClose, onSuccess, initialData })
       let response;
       if (initialData) {
         // Update existing freelancer using PATCH
-        response = await fetch(`http://localhost:5555/freelancers/${initialData.id}`, {
+        response = await fetch(`/freelancers/${initialData.id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ const FreelancerFormModal = ({ isOpen, onRequestClose, onSuccess, initialData })
         });
       } else {
         // Add new freelancer using POST
-        response = await fetch('http://localhost:5555/freelancers', {
+        response = await fetch('/freelancers', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
