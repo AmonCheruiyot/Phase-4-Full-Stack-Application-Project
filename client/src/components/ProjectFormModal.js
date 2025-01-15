@@ -35,7 +35,7 @@ const ProjectFormModal = ({ isOpen, onRequestClose, onSuccess, initialProject })
       let response;
       if (initialProject) {
         // Update existing project using PATCH
-        response = await fetch(`http://localhost:5555/projects/${initialProject.id}`, {
+        response = await fetch(`/projects/${initialProject.id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ const ProjectFormModal = ({ isOpen, onRequestClose, onSuccess, initialProject })
         });
       } else {
         // Add new project using POST
-        response = await fetch('http://localhost:5555/projects', {
+        response = await fetch('/projects', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -14,7 +14,7 @@ const ProjectList = ({ projects, handleSuccess }) => {
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this project?')) {
-      fetch(`http://localhost:5555/projects/${id}`, {
+      fetch(`/projects/${id}`, {
         method: 'DELETE',
       })
         .then(response => {
@@ -32,7 +32,7 @@ const ProjectList = ({ projects, handleSuccess }) => {
 
   const toggleProjectDetails = async (projectId) => {
     try {
-      const response = await fetch(`http://localhost:5555/projects/${projectId}`);
+      const response = await fetch(`/projects/${projectId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch project details');
       }

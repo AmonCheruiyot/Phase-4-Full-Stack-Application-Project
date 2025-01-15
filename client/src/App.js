@@ -27,21 +27,21 @@ function App() {
   }, []);
 
   const fetchFreelancers = () => {
-    fetch("http://localhost:5555/freelancers")
+    fetch("/freelancers")
       .then(response => response.json())
       .then(data => setFreelancers(data))
       .catch(error => console.error('Error fetching freelancers:', error));
   };
 
   const fetchClients = () => {
-    fetch("http://localhost:5555/clients")
+    fetch("/clients")
       .then(response => response.json())
       .then(data => setClients(data))
       .catch(error => console.error('Error fetching clients:', error));
   };
 
   const fetchProjects = () => {
-    fetch("http://localhost:5555/projects")
+    fetch("/projects")
       .then(response => response.json())
       .then(data => setProjects(data))
       .catch(error => console.error('Error fetching projects:', error));
